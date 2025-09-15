@@ -1,6 +1,21 @@
-// SPDX-License-Identifier: MIT
+                                                                      
+                                                                               
 
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
+
+
+
+//  $$$$$$\   $$$$$$\ $$$$$$$$\ $$$$$$$\   $$$$$$\  $$$$$$$$\ $$\   $$\ $$$$$$$$\ 
+// $$  __$$\ $$  __$$\\__$$  __|$$  __$$\ $$  __$$\ \____$$  |$$$\  $$ |\__$$  __|
+// $$ /  $$ |$$ /  \__|  $$ |   $$ |  $$ |$$ /  $$ |    $$  / $$$$\ $$ |   $$ |   
+// $$$$$$$$ |\$$$$$$\    $$ |   $$$$$$$  |$$$$$$$$ |   $$  /  $$ $$\$$ |   $$ |   
+// $$  __$$ | \____$$\   $$ |   $$  __$$< $$  __$$ |  $$  /   $$ \$$$$ |   $$ |   
+// $$ |  $$ |$$\   $$ |  $$ |   $$ |  $$ |$$ |  $$ | $$  /    $$ |\$$$ |   $$ |   
+// $$ |  $$ |\$$$$$$  |  $$ |   $$ |  $$ |$$ |  $$ |$$$$$$$$\ $$ | \$$ |   $$ |   
+// \__|  \__| \______/   \__|   \__|  \__|\__|  \__|\________|\__|  \__|   \__|   
+                                                                               
+         
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
@@ -13,7 +28,9 @@ contract AzntToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit 
         ERC20("AzntToken", "AZNT")
         Ownable(initialOwner)
         ERC20Permit("AzntToken")
-    {}
+    {
+
+    }
 
     function pause() public onlyOwner {
         _pause();

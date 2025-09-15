@@ -26,7 +26,7 @@ const tronWeb = new TronWeb({
 // checkBalance().catch(console.error);
 
 
- let addr = "TFjs8m8MafwRurNc2jGy3zAz9mLBz65doM"
+let addr = "TFjs8m8MafwRurNc2jGy3zAz9mLBz65doM"
 async function main() {
   const contractFile = JSON.parse(
     fs.readFileSync(

@@ -33,10 +33,10 @@ A next-generation staking decentralized application (DApp) on the Tron blockchai
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
+- Node.js 
 - npm or yarn
 - TronLink wallet
-- Tron testnet TRX (for testing)
+- Tron testnet TRX 
 
 ### Installation
 
