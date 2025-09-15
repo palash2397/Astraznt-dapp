@@ -32,32 +32,32 @@ const config: HardhatUserConfig = {
       type: "edr-simulated",
       chainType: "op",
     },
-    sepolia: {
-      type: "http",
-      chainType: "l1",
-      url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts: [
-        process.env.PRIVATE_KEY,
-      ],
-    },
+    // sepolia: {
+    //   type: "http",
+    //   chainType: "l1",
+    //   url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts: [
+    //     process.env.PRIVATE_KEY,
+    //   ],
+    // },
 
-    bscTestnet: {
-      type: "http",
-      chainType: "l1",
-      url: `https://bsc-testnet-dataseed.bnbchain.org`,
-      accounts: [
-        process.env.PRIVATE_KEY,
-      ],
-    },
+    // bscTestnet: {
+    //   type: "http",
+    //   chainType: "l1",
+    //   url: `https://bsc-testnet-dataseed.bnbchain.org`,
+    //   accounts: [
+    //     process.env.PRIVATE_KEY,
+    //   ],
+    // },
 
-    amoy: {
-      type: "http",
-      chainType: "l1",
-      url: `https://polygon-amoy.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts: [
-        process.env.PRIVATE_KEY_2,
-      ],
-    },
+    // amoy: {
+    //   type: "http",
+    //   chainType: "l1",
+    //   url: `https://polygon-amoy.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts: [
+    //     process.env.PRIVATE_KEY_2,
+    //   ],
+    // },
   },
 
   verify: {
