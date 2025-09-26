@@ -3,7 +3,7 @@ import fs from "fs";
 import dotenv from "dotenv";
 
 dotenv.config();
-console.log(process.env.PRIVATE_KEY_TRON)
+// console.log(process.env.PRIVATE_KEY_TRON)
 const tronWeb = new TronWeb({
   fullHost: process.env.TRON_NETWORK, // Testnet
   privateKey: process.env.PRIVATE_KEY_TRON,
@@ -34,6 +34,9 @@ async function main() {
       "utf8"
     )
   );
+
+  // "./artifacts/contracts/MTBVirtual.sol/MTBVirtual.json",
+  // "./artifacts/contracts/AZNTVirtual.sol/AZNTVirtual.json"
   
   const abi = contractFile.abi;
   const bytecode = contractFile.bytecode;
@@ -43,8 +46,8 @@ async function main() {
   const contract = await tronWeb.contract().new({
     abi,
     bytecode,
-    feeLimit: 100_000_000,
-    parameters: [addr]
+    feeLimit: 600_000_000,
+    parameters: []
   });
 
   const base58Address = tronWeb.address.fromHex(contract.address);
@@ -55,3 +58,10 @@ main().catch(console.error);
 
 
 // TMcvYed164kaQexMfXxerZtGY592gWRwgk
+
+
+// Aznt virtual
+// TGCmqDZPbVAtx4rMioapzcQrMWAPC9edNJ
+
+// MTB Virtual
+// TMDGBV8go2bdSKFmEmShisZrzrBrPTwcs8

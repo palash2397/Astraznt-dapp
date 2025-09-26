@@ -19,11 +19,11 @@ import {ERC20Pausable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC2
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract AZNTVirtual is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit {
-    constructor(address initialOwner)
-        ERC20("AzntVirtual", "AZNTV")
-        Ownable(initialOwner)
-        ERC20Permit("AzntVirtual")
+contract AzntToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit {
+    constructor()
+        ERC20("AzntToken", "AZNT")
+        Ownable(msg.sender)
+        ERC20Permit("AzntToken")
     {
 
     }
