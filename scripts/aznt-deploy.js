@@ -27,10 +27,14 @@ const tronWeb = new TronWeb({
 
 
 let addr = "TFjs8m8MafwRurNc2jGy3zAz9mLBz65doM"
+
+let azntVirtual = "TGCmqDZPbVAtx4rMioapzcQrMWAPC9edNJ"
+let mtbVirtual = "TMDGBV8go2bdSKFmEmShisZrzrBrPTwcs8"
+let azntToken ="TNBmT7yDZYPC799Z2uQWgPsrabcGeoReH2"
 async function main() {
   const contractFile = JSON.parse(
     fs.readFileSync(
-      "./artifacts/contracts/AzntToken.sol/AzntToken.json",
+      "./artifacts/contracts/AzntStaking.sol/AZNTStaking.json",
       "utf8"
     )
   );
@@ -46,8 +50,8 @@ async function main() {
   const contract = await tronWeb.contract().new({
     abi,
     bytecode,
-    feeLimit: 600_000_000,
-    parameters: []
+    feeLimit: 800_000_000,
+    parameters: [azntToken,azntVirtual, mtbVirtual]
   });
 
   const base58Address = tronWeb.address.fromHex(contract.address);

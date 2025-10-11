@@ -19,14 +19,26 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./AZNTVirtual.sol";
 import "./MTBVirtual.sol";
 
+
+interface ISunSwapRouter {
+    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
+    function WTRX() external pure returns (address);
+}
+
+interface ISunSwapPair {
+    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
+    function token0() external view returns (address);
+    function token1() external view returns (address);
+}
+
 contract AZNTStaking is Ownable, ReentrancyGuard {
 
     ERC20 public immutable azntToken;
     AZNTVirtual public immutable azntVirtual;
     MTBVirtual public immutable mtbVirtual;
 
-    uint256 public constant MIN_STAKE = 1e6;
-    uint256 public constant MAX_STAKE = 10000000e6;
+   uint256 public constant MIN_STAKE = 1e18;        // 1 token
+    uint256 public constant MAX_STAKE = 10000000e18;
     uint256 public constant DAY_IN_SECONDS = 86400;
     bool public stakingEnabled = true;
 
@@ -50,6 +62,20 @@ contract AZNTStaking is Ownable, ReentrancyGuard {
     }
 
 
+
+    address public constant SUNSWAP_ROUTER = 0xECaB2fACB0f2A1B61d27c82Be60cfA5a3d84aC75; // Tron Mainnet
+    address public constant WTRX = 0x891CDB91D149F23B1A45D9C5CA78A88D0CB44C18; // Wrapped TRX
+    address public azntTrxPair; // AZNT-TRX pair address (set in constructor)
+
+    // Price caching
+    struct PriceData {
+      uint256 price;
+      uint256 timestamp;
+    }
+    mapping(uint256 => PriceData) public priceCache;
+    uint256 public constant PRICE_CACHE_DURATION = 5 minutes;
+
+
     mapping(address => Stake[]) public userStakes;
     mapping(address => address) public referrerOf;
     mapping(address => uint256) public totalReferralCount;
@@ -64,10 +90,11 @@ contract AZNTStaking is Ownable, ReentrancyGuard {
     event Unstaked(address indexed user, uint256 rewards, uint256 fee);
     event ReferralRecorded(address indexed user, address indexed referrer);
 
-    constructor(address _azntToken, address _azntVirtual, address _mtbVirtual) Ownable(msg.sender) {
+    constructor(address _azntToken, address _azntVirtual, address _mtbVirtual, address _azntTrxPair) Ownable(msg.sender) {
         azntToken = ERC20(_azntToken);
         azntVirtual = AZNTVirtual(_azntVirtual);
         mtbVirtual = MTBVirtual(_mtbVirtual);
+        azntTrxPair = _azntTrxPair;
 
         // Initialize referral levels (ADDED for Week 3)
         referralLevels[0] = LevelReq(100e6, 1, 15);
@@ -237,9 +264,57 @@ contract AZNTStaking is Ownable, ReentrancyGuard {
         return total;
     }
 
-    function getAZNTPrice() public pure returns (uint256) {
-        return 100;
+
+    function setAZNTPairAddress(address _newPair) external onlyOwner {
+         azntTrxPair = _newPair;
     }
+
+   // SUNSWAP INTEGRATION 
+   function getAZNTPrice() public view returns (uint256) {
+      ISunSwapRouter router = ISunSwapRouter(SUNSWAP_ROUTER);
+    
+       // Calculate how much AZNT you get for 1 TRX
+       uint256 trxAmount = 1e6; // 1 TRX = 1,000,000 sun
+       address[] memory path = new address[](2);
+       path[0] = WTRX;
+       path[1] = address(azntToken);
+    
+      try router.getAmountsOut(trxAmount, path) returns (uint[] memory amounts) {
+        if (amounts[1] > 0) {
+            return amounts[1]; // Returns AZNT amount for 1 TRX
+        } else {
+            return getAZNTPriceViaReserves(); // Fallback
+        }
+      } catch {
+        return getAZNTPriceViaReserves(); // Fallback if router call fails
+      }
+    }
+
+// Fallback method using reserves
+   function getAZNTPriceViaReserves() internal view returns (uint256) {
+      if (azntTrxPair == address(0)) return 100; // Default if pair not set
+    
+      ISunSwapPair pair = ISunSwapPair(azntTrxPair);
+      (uint112 reserve0, uint112 reserve1, ) = pair.getReserves();
+      address token0 = pair.token0();
+    
+      uint256 azntReserve;
+      uint256 trxReserve;
+    
+      if (token0 == address(azntToken)) {
+        azntReserve = reserve0;
+        trxReserve = reserve1;
+      } else {
+        azntReserve = reserve1;
+        trxReserve = reserve0;
+     }
+    
+     if (azntReserve > 0) {
+        return (trxReserve * 1e6) / azntReserve;
+      }
+    
+      return 100; 
+   }
 
     function getPriceTier(uint256 price) public pure returns (uint256) {
         if (price <= 100) return 0;
